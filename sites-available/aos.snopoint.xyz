@@ -1,0 +1,38 @@
+server	{
+	root /var/www/aos.snopoint.xyz;
+	index index.html;
+	server_name aos.snopoint.xyz;
+	
+	listen 443 ssl;
+
+	ssl_certificate /etc/letsencrypt/live/aos.snopoint.xyz/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/aos.snopoint.xyz/privkey.pem; # managed by Certbot
+
+	include /etc/letsencrypt/options-ssl-nginx.conf;
+
+	# Redirect non-https traffic to https
+	if ($scheme != "https") {
+        return 301 https://aos.snopoint.xyz$request_uri;
+	} # managed by Certbot
+}
+
+server	{
+    	if ($host = aos.snopoint.xyz) {
+        return 301 https://aos.snopoint.xyz$request_uri;
+	} # managed by Certbot
+
+	listen 80;
+	listen [::]:80;
+	root /var/www/aos.snopoint.xyz;
+	index index.html;
+	server_name aos.snopont.xyz;
+
+	ssl_certificate /etc/letsencrypt/live/aos.snopoint.xyz/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/aos.snopoint.xyz/privkey.pem;
+
+	return 404;
+
+	location / {
+		try_files $uri $uri.html uri/ =404;
+	}
+}
